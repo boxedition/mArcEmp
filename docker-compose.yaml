@@ -1,0 +1,46 @@
+name: "sa-gpt"
+services:
+  ## Paperless
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+  db:
+    image: docker.io/library/postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - db
+      - broker
+    ports:
+      - "8010:8000"
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_DBHOST: db
+      USERMAP_UID: 1000
+      USERMAP_GID: 100
+  ##Private GPT
+  privategpt:
+    ports:
+      - "8080:8001"
+    image: boxedition/privategpt:gpu-latest
+    depends_on:
+      - paperless
+    volumes:
+      - "content:/app/truth"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+
+volumes:
+  content:
