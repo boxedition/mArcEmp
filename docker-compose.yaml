@@ -4,9 +4,13 @@ services:
   broker:
     image: docker.io/library/redis:7
     restart: unless-stopped
+    volumes:
+      - redis-data:/data
   db:
     image: docker.io/library/postgres:16
     restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
@@ -14,6 +18,12 @@ services:
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     restart: unless-stopped
+    volumes:
+      - paper-data:/usr/src/paperless/data
+      - paper-media:/usr/src/paperless/media
+      - paper-export:/usr/src/paperless/export
+      - paper-consume:/usr/src/paperless/consume
+      - sa-content:/usr/src/paperless/media/documents/archive
     depends_on:
       - db
       - broker
@@ -32,7 +42,7 @@ services:
     depends_on:
       - paperless
     volumes:
-      - "content:/app/truth"
+      - sa-content:/app/truth
     deploy:
       resources:
         reservations:
@@ -43,4 +53,11 @@ services:
                 - gpu
 
 volumes:
-  content:
+  sa-content:
+  # Adding default volumes
+  redis-data:
+  postgres-data:
+  paper-data:
+  paper-media:
+  paper-export:
+  paper-consume:
