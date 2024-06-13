@@ -27,7 +27,7 @@ services:
   ##Private GPT
   privategpt:
     ports:
-      - "8080:8001"
+      - "8001:8001"
     image: boxedition/privategpt:gpu-latest
     depends_on:
       - paperless
