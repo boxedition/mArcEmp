@@ -25,3 +25,9 @@ Inicializar Solução:
 ```
 docker compose up -d
 ```
+
+Reboot after files changed:
+
+```
+docker compose restart privategpt
+```

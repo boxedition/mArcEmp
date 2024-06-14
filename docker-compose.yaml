@@ -42,7 +42,10 @@ services:
     depends_on:
       - paperless
     volumes:
-      - sa-content:/app/truth
+      - sa-content:/app/local_data/truth
+    # Nota
+    # Pode ser necessário adicionar make wipe antes to ingest
+    entrypoint: /bin/bash -c "make ingest local_data/truth && make run"
     deploy:
       resources:
         reservations:
