@@ -15,6 +15,7 @@ services:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: paperless
+
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     restart: unless-stopped
@@ -40,19 +41,27 @@ services:
       PAPERLESS_DBHOST: db
       USERMAP_UID: 1000
       USERMAP_GID: 100
+
   ##Private GPT
   privategpt:
     ports:
       - "8001:8001"
+    # Imagens disponíveis:
+    # Imagem para CPU: boxedition/privategpt:cpu-latest
+    # Imagem para GPU: boxedition/privategpt:gpu-latest
     image: boxedition/privategpt:gpu-latest
     depends_on:
       - paperless
     volumes:
+      # Volume com conteúdo de Paperless
       - sa-content:/app/local_data/truth/paperless
+      # Volume da pasta de samples/regulamentos
       - ./samples/regulamentos:/app/local_data/truth/samples
     # Nota
-    # Pode ser necessário adicionar make wipe antes to ingest
+    # Pode ser necessário limpar dados anteriores
+    # Adicionar " make wipe && " (antes do make ingest)
     entrypoint: /bin/bash -c "make ingest local_data/truth && make run"
+    # Remover deploy em caso de placa gráfica não for uma Nvidia RTX
     deploy:
       resources:
         reservations:
