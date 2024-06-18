@@ -10,6 +10,8 @@ git clone https://github.com/boxedition/mArcEmp
 
 Pasta SaveOutlookAttachments
 
+Regra Outlook: https://i.imgur.com/WxQIExz.png
+
 ## Setup
 
 Pull Images:
@@ -29,6 +31,12 @@ Criar conta para o Paperless:
 
 docker compose run --rm paperless createsuperuser
 ```
+
+> Note:
+>
+> PaperLess não consegue fazer ocr de pdf encriptados. Existe possíbilidade da causa estar relacionada com assinaturas
+>
+> https://imgur.com/36VO9Rf
 
 Inicializar Solução:
 
